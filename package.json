@@ -1,0 +1,20 @@
+{
+	"name": "CypherBox",
+	"version": "1.0.0",
+	"description": "minimilastic CLI app to generate key pairs, Cypher and decypher messages",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"start": "node src/index.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "revoltez",
+	"license": "ISC",
+	"dependencies": {
+		"chalk": "^5.0.1",
+		"figlet": "^1.5.2",
+		"gradient-string": "^2.0.1",
+		"inquirer": "^9.0.2",
+		"node-forge": "^1.3.1"
+	}
+}
