@@ -3,7 +3,9 @@
 <p align="center">
 <img src="./logo.png" class="center"></p>
 </p>
-A minimalist Cryptographic CLI tool 
+
+A minimalist Cryptographic CLI tool
+
 - generate and keep track of your accounts (like wallets)
 - it can be used for signing, encrypting and decrypting messages
 - signing keys are diffrent from encryption keys and both are generated from a password that the user provides
