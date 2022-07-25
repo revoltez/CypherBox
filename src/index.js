@@ -3,7 +3,7 @@ import chalk from "chalk";
 import gradient from "gradient-string";
 import inquirer from "inquirer";
 import forge from "node-forge";
-import { getKey, generateKeyPair } from "./keyManager.js";
+import { getSigningKeyPair, createAccount } from "./accountUtils.js";
 import { encryptionHandler } from "./encryptionHandler.js";
 import isEqual from "arraybuffer-equal";
 
@@ -11,9 +11,9 @@ console.log(gradient.pastel.multiline(figlet.textSync("CypherBox")));
 console.log("");
 console.log(chalk.blue("CypherBox is a minimalistic cryptographic CLI tool"));
 
-//retireive keys from .config/cypherBox/keys/
+//retireive accounts from .config/cypherBox/accounts/
 let config = {
-	keys: [],
+	accounts: [],
 	selectedAccount: "",
 	setSelectedAccount(acc) {
 		console.log(chalk.greenBright(acc.name, " selected"));
@@ -56,19 +56,22 @@ async function handleChoice(answers) {
 	try {
 		switch (answers.generalChoice) {
 			case 1:
-				let result = await generateKeyPair();
+				let result = await createAccount();
 				let acc = {
 					name: result.name,
-					keypair: result.value.keypair,
+					signingkeyPairkey:
+						result.value.signingkeyPair,
+					encKeyPair: result.value.encKeyPair,
 				};
 				config.setSelectedAccount(acc);
-				result.value.keypair.privateKey = "";
-				config.keys.push(result);
-				//append new json value to keys file
+				result.value.signingkeyPair.privateKey = "";
+				result.value.encKeyPair.privateKey = "";
+				config.accounts.push(result);
+				//append new json value to accounts file
 				homeList();
 				break;
 			case 2:
-				if (config.keys.length === 0) {
+				if (config.accounts.length === 0) {
 					console.log(
 						chalk.red(
 							"there are no Accounts yet"
@@ -80,7 +83,7 @@ async function handleChoice(answers) {
 							type: "list",
 							message: "select one the following Accounts",
 							name: "account",
-							choices: config.keys,
+							choices: config.accounts,
 						},
 					]);
 					let authenticated = await authenticate(
@@ -127,14 +130,14 @@ async function authenticate(selected) {
 		},
 	]);
 	let seed = Buffer.from(result.seed);
-	let keyTest = getKey(seed);
+	let keyTest = getSigningKeyPair(seed);
 	if (
 		isEqual(
-			selected.account.keypair.publicKey.Buffer,
+			selected.account.signingkeyPair.publicKey.Buffer,
 			keyTest.publicKey.Buffer
 		)
 	) {
-		selected.account.keypair.privateKey = keyTest.privateKey;
+		selected.account.signingkeyPair.privateKey = keyTest.privateKey;
 		config.setSelectedAccount(selected.account);
 		return true;
 	} else {
