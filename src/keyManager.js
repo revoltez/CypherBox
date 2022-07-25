@@ -2,9 +2,14 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import forge from "node-forge";
 
+let ed25519 = forge.pki.ed25519;
+
+function getKey(seed) {
+	return ed25519.generateKeyPair({ seed: seed });
+}
+
 async function generateKeyPair() {
 	try {
-		let ed25519 = forge.pki.ed25519;
 		const answer = await inquirer.prompt([
 			{
 				type: "input",
@@ -13,7 +18,7 @@ async function generateKeyPair() {
 			},
 		]);
 		var seed = Buffer.from(answer.password);
-		var keypair = ed25519.generateKeyPair({ seed: seed });
+		var keypair = getKey(seed);
 		console.log(chalk.greenBright("KeyPair Generated succesfully"));
 		const keyName = await inquirer.prompt([
 			{
@@ -40,4 +45,4 @@ async function generateKeyPair() {
 	}
 }
 
-export { generateKeyPair };
+export { generateKeyPair, getKey };

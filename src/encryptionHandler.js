@@ -8,10 +8,10 @@ async function encryptionList() {
 			name: "choice",
 			choices: [
 				{
-					name: "encrypt message from prompt",
+					name: "Enter Text from prompt",
 					value: 1,
 				},
-				{ name: "pass path to encrypt", value: 2 },
+				{ name: "Pass path to encrypt", value: 2 },
 			],
 		},
 	]);
