@@ -19,8 +19,9 @@ async function createAccount() {
 			},
 		]);
 		const spinner = ora({
-			text: "Generating Keys (you need an RTX to properly render the loading animation)",
-			spinner: spinnerObj,
+			text: "Generating Keys (this might take a while)",
+			color: "yellow",
+			spinner: "arrow3",
 		}).start();
 		let seed = Buffer.from(answer.password);
 		let signingkeyPair = getSigningKeyPair(seed);

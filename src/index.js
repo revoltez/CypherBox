@@ -5,6 +5,9 @@ import inquirer from "inquirer";
 import { getSigningKeyPair, createAccount } from "./accountUtils.js";
 import { encryptionHandler } from "./encryptionHandler.js";
 import isEqual from "arraybuffer-equal";
+import { configDirs, initConfigs } from "./configLoader.js";
+import fs, { mkdir, readFileSync, writeFileSync } from "fs";
+
 console.log(gradient.pastel.multiline(figlet.textSync("CypherBox")));
 console.log("");
 console.log(chalk.blue("CypherBox is a minimalistic cryptographic CLI tool"));
@@ -19,9 +22,9 @@ let config = {
 	},
 };
 
-function init() {
-	//check if settings exist and load them
-}
+(function () {
+	initConfigs(config);
+})();
 
 async function homeList() {
 	try {
@@ -67,7 +70,8 @@ async function handleChoice(answers) {
 				result.value.signingkeyPair.privateKey = "";
 				result.value.encKeyPair.privateKey = "";
 				config.accounts.push(result);
-				//append new json value to accounts file
+				let output = JSON.stringify(config.accounts);
+				writeFileSync(configDirs.accountsPath, output);
 				homeList();
 				break;
 			case 2:
