@@ -2,11 +2,9 @@ import figlet from "figlet";
 import chalk from "chalk";
 import gradient from "gradient-string";
 import inquirer from "inquirer";
-import forge from "node-forge";
 import { getSigningKeyPair, createAccount } from "./accountUtils.js";
 import { encryptionHandler } from "./encryptionHandler.js";
 import isEqual from "arraybuffer-equal";
-
 console.log(gradient.pastel.multiline(figlet.textSync("CypherBox")));
 console.log("");
 console.log(chalk.blue("CypherBox is a minimalistic cryptographic CLI tool"));
@@ -41,8 +39,10 @@ async function homeList() {
 						value: 2,
 						name: "Select Account",
 					},
-					{ value: 3, name: "Encrypt" },
-					{ value: 4, name: "Decrypt" },
+					{ value: 3, name: "Sign" },
+					{ value: 4, name: "Verify" },
+					{ value: 5, name: "Encrypt" },
+					{ value: 6, name: "Decrypt" },
 				],
 			},
 		]);

@@ -2,7 +2,7 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import forge from "node-forge";
 import ora from "ora";
-
+import { spinnerObj } from "./spinner.js";
 let ed25519 = forge.pki.ed25519;
 
 function getSigningKeyPair(seed) {
@@ -18,13 +18,14 @@ async function createAccount() {
 				message: "Type a password",
 			},
 		]);
-		const spinner = ora(
-			"Generating Keys, this might take a while"
-		).start();
-		spinner.color = "blue";
+		const spinner = ora({
+			text: "Generating Keys (you need an RTX to properly render the loading animation)",
+			spinner: spinnerObj,
+		}).start();
 		let seed = Buffer.from(answer.password);
 		let signingkeyPair = getSigningKeyPair(seed);
 		let encKeyPair = await getRsaKeysFromSeed(seed);
+		console.log(encKeyPair);
 		spinner.succeed("Keys Generated Successfully");
 		const accountName = await inquirer.prompt([
 			{
@@ -59,14 +60,14 @@ function getRsaKeysFromSeed(seed) {
 		const prng = forge.random.createInstance();
 		let seedObj = new String(seed);
 		prng.seedFileSync = () => seedObj.toString("hex");
-		let result = forge.pki.rsa.generateKeyPair(
+		forge.pki.rsa.generateKeyPair(
 			{
 				bits: 4096,
 				prng,
-				workers: 4,
+				workers: -1,
 			},
 			function (err, keypair) {
-				resolve(result);
+				resolve(keypair);
 			}
 		);
 	});
