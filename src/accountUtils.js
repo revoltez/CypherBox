@@ -26,6 +26,13 @@ async function createAccount() {
 		let seed = Buffer.from(answer.password, "utf8");
 		let signingkeyPair = getSigningKeyPair(seed);
 		let encKeyPair = await getRsaKeysFromSeed(seed);
+		encKeyPair.publicKey = forge.pki.publicKeyToPem(
+			encKeyPair.publicKey
+		);
+		encKeyPair.privateKey = forge.pki.encryptRsaPrivateKey(
+			encKeyPair.privateKey,
+			answer.password
+		);
 		spinner.succeed("Keys Generated Successfully");
 		const accountName = await inquirer.prompt([
 			{

@@ -2,7 +2,7 @@ import fs, { mkdir, readFileSync, writeFileSync } from "fs";
 import chalk from "chalk";
 import os from "os";
 import path from "path";
-
+import JSONfn from "json-fn";
 const homedir = os.homedir();
 
 let configDirs = {
@@ -23,7 +23,7 @@ function initConfigs(config) {
 	try {
 		if (fs.existsSync(configDirs.accountsPath)) {
 			let accounts = readFileSync(configDirs.accountsPath);
-			config.accounts = JSON.parse(accounts);
+			config.accounts = JSONfn.parse(accounts);
 			if (config.accounts.length > 0) {
 				config.selectedAccount =
 					config.accounts[0].value;

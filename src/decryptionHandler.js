@@ -3,8 +3,8 @@ import fs, { mkdir, readFileSync, writeFileSync } from "fs";
 import chalk from "chalk";
 import path from "path";
 import forge from "node-forge";
-async function encryptionHandler(encKeyPair) {
-	console.log("enc Key pair", encKeyPair);
+async function decryptionHandler(encKeyPair) {
+	console.log(encKeyPair);
 	let source = await inquirer.prompt([
 		{
 			type: "input",
@@ -19,15 +19,26 @@ async function encryptionHandler(encKeyPair) {
 			message: "Destination path:",
 		},
 	]);
-	let publicKey = forge.pki.publicKeyFromPem(encKeyPair.publicKey);
+	let result = await inquirer.prompt([
+		{
+			type: "input",
+			name: "password",
+			message: "Private Key Protected by Password:",
+		},
+	]);
+
+	let privateKey = forge.pki.decryptRsaPrivateKey(
+		encKeyPair.privateKey,
+		result.password
+	);
 	if (fs.existsSync(source.path)) {
 		let file = readFileSync(source.path);
-		let encrypted = publicKey.encrypt(file);
+		let decrypted = privateKey.decrypt(file);
 		let filename = path.basename(source.path);
-		writeFileSync(destination.path, encrypted);
-		console.log(chalk.greenBright.bgBlack(filename, "ENCRYPTED"));
+		writeFileSync(destination.path, decrypted);
+		console.log(chalk.greenBright.bgBlack(filename, "DECRYPTED"));
 	} else {
 		console.log(chalk.red("path does not exist"));
 	}
 }
-export { encryptionHandler };
+export { decryptionHandler };

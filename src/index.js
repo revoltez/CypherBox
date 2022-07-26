@@ -9,7 +9,9 @@ import isEqual from "arraybuffer-equal";
 import { configDirs, initConfigs } from "./configLoader.js";
 import fs, { mkdir, readFileSync, writeFileSync } from "fs";
 import lodash from "lodash";
-
+import JSONfn from "json-fn";
+import forge from "node-forge";
+import { decryptionHandler } from "./decryptionHandler.js";
 console.log(gradient.pastel.multiline(figlet.textSync("CypherBox")));
 console.log("");
 console.log(
@@ -74,9 +76,8 @@ async function handleChoice(answers) {
 				};
 				config.setSelectedAccount(acc);
 				result.value.signingkeyPair.privateKey = "";
-				result.value.encKeyPair.privateKey = "";
 				config.accounts.push(result);
-				let output = JSON.stringify(config.accounts);
+				let output = JSONfn.stringify(config.accounts);
 				writeFileSync(configDirs.accountsPath, output);
 				homeList();
 				break;
@@ -154,12 +155,15 @@ async function handleChoice(answers) {
 				homeList();
 				break;
 			case 4:
+				await encryptionHandler(
+					config.selectedAccount.encKeyPair
+				);
 				homeList();
 				break;
 			case 5:
-				homeList();
-				break;
-			case 6:
+				await decryptionHandler(
+					config.selectedAccount.encKeyPair
+				);
 				homeList();
 				break;
 		}
