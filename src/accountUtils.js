@@ -23,10 +23,9 @@ async function createAccount() {
 			color: "yellow",
 			spinner: "arrow3",
 		}).start();
-		let seed = Buffer.from(answer.password);
+		let seed = Buffer.from(answer.password, "utf8");
 		let signingkeyPair = getSigningKeyPair(seed);
 		let encKeyPair = await getRsaKeysFromSeed(seed);
-		console.log(encKeyPair);
 		spinner.succeed("Keys Generated Successfully");
 		const accountName = await inquirer.prompt([
 			{

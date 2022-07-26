@@ -133,13 +133,13 @@ async function authenticate(selected) {
 			name: "seed",
 		},
 	]);
-	let seed = Buffer.from(result.seed);
+	let seed = Buffer.from(result.seed, "utf-8");
 	let keyTest = getSigningKeyPair(seed);
 	if (
-		isEqual(
-			selected.account.signingkeyPair.publicKey.Buffer,
-			keyTest.publicKey.Buffer
-		)
+		Buffer.compare(
+			Buffer.from(selected.account.signingkeyPair.publicKey),
+			Buffer.from(keyTest.publicKey)
+		) === 0
 	) {
 		selected.account.signingkeyPair.privateKey = keyTest.privateKey;
 		config.setSelectedAccount(selected.account);
