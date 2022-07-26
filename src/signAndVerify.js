@@ -7,11 +7,6 @@ import os from "os";
 import path from "path";
 import { config } from "process";
 
-let ed25519 = forge.pki.ed25519;
-var password = "Mai9ohgh6ahxee0jutheew0pungoozil";
-var seed = Buffer.from(password, "utf8");
-var keypair = ed25519.generateKeyPair({ seed: seed });
-
 async function signAndVerifyHandler(signingkeyPair) {
 	let result = await inquirer.prompt([
 		{
@@ -92,10 +87,10 @@ function verify(filePath, sigPath, pubKey) {
 		let verified = ed25519.verify({
 			message: Buffer.from(file, "binary"),
 			signature: sig,
-			publicKey: Buffer.from(pubKey),
+			publicKey: pubKey,
 		});
 		if (verified) {
-			console.log(chalk.blue("File verified"));
+			console.log(chalk.blue("File Authentic"));
 		} else {
 			console.log(
 				chalk.red(

@@ -8,6 +8,7 @@ import { encryptionHandler } from "./encryptionHandler.js";
 import isEqual from "arraybuffer-equal";
 import { configDirs, initConfigs } from "./configLoader.js";
 import fs, { mkdir, readFileSync, writeFileSync } from "fs";
+import lodash from "lodash";
 
 console.log(gradient.pastel.multiline(figlet.textSync("CypherBox")));
 console.log("");
@@ -64,9 +65,12 @@ async function handleChoice(answers) {
 				let result = await createAccount();
 				let acc = {
 					name: result.name,
-					signingkeyPairkey:
-						result.value.signingkeyPair,
-					encKeyPair: result.value.encKeyPair,
+					signingkeyPair: lodash.cloneDeep(
+						result.value.signingkeyPair
+					),
+					encKeyPair: lodash.cloneDeep(
+						result.value.encKeyPair
+					),
 				};
 				config.setSelectedAccount(acc);
 				result.value.signingkeyPair.privateKey = "";
@@ -184,7 +188,7 @@ async function authenticate(selected) {
 			Buffer.from(keyTest.publicKey)
 		) === 0
 	) {
-		selected.signingkeyPair.privateKey = keyTest.privateKey;
+		selected.signingkeyPair = keyTest;
 		config.setSelectedAccount(selected);
 		return true;
 	} else {
