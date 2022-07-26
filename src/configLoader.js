@@ -24,7 +24,11 @@ function initConfigs(config) {
 		if (fs.existsSync(configDirs.accountsPath)) {
 			let accounts = readFileSync(configDirs.accountsPath);
 			config.accounts = JSON.parse(accounts);
-			console.log("Welcom Back", config.accounts);
+			if (config.accounts.length > 0) {
+				config.selectedAccount =
+					config.accounts[0].value;
+			}
+			console.log(chalk.blue("Welcome Back"));
 		} else {
 			mkdir(
 				configDirs.cypherBoxDir,

@@ -3,6 +3,7 @@ import chalk from "chalk";
 import gradient from "gradient-string";
 import inquirer from "inquirer";
 import { getSigningKeyPair, createAccount } from "./accountUtils.js";
+import { signAndVerifyHandler } from "./signAndVerify.js";
 import { encryptionHandler } from "./encryptionHandler.js";
 import isEqual from "arraybuffer-equal";
 import { configDirs, initConfigs } from "./configLoader.js";
@@ -10,7 +11,9 @@ import fs, { mkdir, readFileSync, writeFileSync } from "fs";
 
 console.log(gradient.pastel.multiline(figlet.textSync("CypherBox")));
 console.log("");
-console.log(chalk.blue("CypherBox is a minimalistic cryptographic CLI tool"));
+console.log(
+	chalk.black.bgBlue("CypherBox is a minimalistic cryptographic CLI tool")
+);
 
 //retireive accounts from .config/cypherBox/accounts/
 let config = {
@@ -42,10 +45,9 @@ async function homeList() {
 						value: 2,
 						name: "Select Account",
 					},
-					{ value: 3, name: "Sign" },
-					{ value: 4, name: "Verify" },
-					{ value: 5, name: "Encrypt" },
-					{ value: 6, name: "Decrypt" },
+					{ value: 3, name: "Sign & Verify" },
+					{ value: 4, name: "Encrypt" },
+					{ value: 5, name: "Decrypt" },
 				],
 			},
 		]);
@@ -91,7 +93,7 @@ async function handleChoice(answers) {
 						},
 					]);
 					let authenticated = await authenticate(
-						result
+						result.account
 					);
 					if (authenticated) {
 						console.log(
@@ -110,10 +112,51 @@ async function handleChoice(answers) {
 				homeList();
 				break;
 			case 3:
-				await encryptionHandler(config);
+				if (
+					config.selectedAccount.signingkeyPair
+						.privateKey === ""
+				) {
+					console.log(
+						chalk.yellow(
+							"Authenticate to continue the operation using this account"
+						)
+					);
+					let authenticated = await authenticate(
+						config.selectedAccount
+					);
+					if (authenticated) {
+						console.log(
+							chalk.black.bgGreen(
+								"Account authenticated successfully"
+							)
+						);
+						await signAndVerifyHandler(
+							config.selectedAccount
+								.signingkeyPair
+						);
+					} else {
+						console.log(
+							chalk.red(
+								"wrong password privided"
+							)
+						);
+					}
+				} else {
+					await signAndVerifyHandler(
+						config.selectedAccount
+							.signingkeyPair
+					);
+				}
 				homeList();
 				break;
 			case 4:
+				homeList();
+				break;
+			case 5:
+				homeList();
+				break;
+			case 6:
+				homeList();
 				break;
 		}
 	} catch (error) {
@@ -129,20 +172,20 @@ async function authenticate(selected) {
 	let result = await inquirer.prompt([
 		{
 			type: "input",
-			message: "enter the appropriate seed phrase",
+			message: "Password Required",
 			name: "seed",
 		},
 	]);
-	let seed = Buffer.from(result.seed, "utf-8");
+	let seed = Buffer.from(result.seed, "utf8");
 	let keyTest = getSigningKeyPair(seed);
 	if (
 		Buffer.compare(
-			Buffer.from(selected.account.signingkeyPair.publicKey),
+			Buffer.from(selected.signingkeyPair.publicKey),
 			Buffer.from(keyTest.publicKey)
 		) === 0
 	) {
-		selected.account.signingkeyPair.privateKey = keyTest.privateKey;
-		config.setSelectedAccount(selected.account);
+		selected.signingkeyPair.privateKey = keyTest.privateKey;
+		config.setSelectedAccount(selected);
 		return true;
 	} else {
 		return false;
