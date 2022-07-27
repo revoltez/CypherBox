@@ -13,7 +13,7 @@ async function createAccount() {
 	try {
 		const answer = await inquirer.prompt([
 			{
-				type: "input",
+				type: "password",
 				name: "password",
 				message: "Type a password",
 			},

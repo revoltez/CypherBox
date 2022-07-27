@@ -21,7 +21,7 @@ async function decryptionHandler(encKeyPair) {
 	]);
 	let result = await inquirer.prompt([
 		{
-			type: "input",
+			type: "password",
 			name: "password",
 			message: "Private Key Protected by Password:",
 		},

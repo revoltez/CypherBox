@@ -179,7 +179,7 @@ async function handleChoice(answers) {
 async function authenticate(selected) {
 	let result = await inquirer.prompt([
 		{
-			type: "input",
+			type: "password",
 			message: "Password Required",
 			name: "seed",
 		},
