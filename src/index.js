@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import figlet from "figlet";
 import chalk from "chalk";
 import gradient from "gradient-string";

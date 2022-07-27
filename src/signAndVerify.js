@@ -7,6 +7,8 @@ import os from "os";
 import path from "path";
 import { config } from "process";
 
+let ed25519 = forge.pki.ed25519;
+
 async function signAndVerifyHandler(signingkeyPair) {
 	let result = await inquirer.prompt([
 		{
@@ -69,7 +71,7 @@ function sign(filePath, prvKey) {
 		let sigpath = filePath + ".signed";
 		writeFileSync(sigpath, signature);
 		console.log(
-			chalk.black.greenBright("File Signed successfully")
+			chalk.black.greenBright("File Signed Successfully")
 		);
 	} else {
 		console.log(

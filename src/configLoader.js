@@ -62,9 +62,7 @@ function initConfigs(config) {
 			let output = JSON.stringify(accounts);
 			writeFileSync(configDirs.accountsPath, output); //passing emmpty string won't work when parsing it next time
 			console.log(
-				chalk.black.bgBlue(
-					"Config files Created successfully"
-				)
+				chalk.blue("Config files Created successfully")
 			);
 		}
 	} catch (err) {

@@ -4,6 +4,9 @@
 	"description": "minimilastic CLI app to generate key pairs, Cypher and decypher messages",
 	"main": "index.js",
 	"type": "module",
+	"bin": {
+		"cypherBox": "src/index.js"
+	},
 	"scripts": {
 		"start": "node src/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
