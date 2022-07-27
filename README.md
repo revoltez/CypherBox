@@ -14,3 +14,6 @@ A minimalist Cryptographic CLI tool
 - Only public keys are stored and only one private key is selected at any time.
 - A password is required whenever the user changes the accounts
 - Visual Appearance might differ depending on your terminal color settings (consider it a feature ;=) )
+
+https://user-images.githubusercontent.com/24751547/181234223-4122c086-bf05-4939-90cd-5e181111a5e4.mp4
+
