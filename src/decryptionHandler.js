@@ -4,7 +4,6 @@ import chalk from "chalk";
 import path from "path";
 import forge from "node-forge";
 async function decryptionHandler(encKeyPair) {
-	console.log(encKeyPair);
 	let source = await inquirer.prompt([
 		{
 			type: "input",

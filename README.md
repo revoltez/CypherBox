@@ -12,4 +12,5 @@ A minimalist Cryptographic CLI tool
 - Each public key is an account with an associated name.
 - cypherBox files are in .config/cypherBox/
 - Only public keys are stored and only one private key is selected at any time.
+- A password is required whenever the user changes the accounts
 - Visual Appearance might differ depending on your terminal color settings (consider it a feature ;=) )
