@@ -33,7 +33,7 @@ async function decryptionHandler(encKeyPair) {
 	);
 	if (fs.existsSync(source.path)) {
 		let file = readFileSync(source.path);
-		let decrypted = privateKey.decrypt(file);
+		let decrypted = privateKey.decrypt(file.toString("binary"));
 		let filename = path.basename(source.path);
 		writeFileSync(destination.path, decrypted);
 		console.log(chalk.greenBright.bgBlack(filename, "DECRYPTED"));

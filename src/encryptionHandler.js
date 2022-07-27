@@ -22,9 +22,11 @@ async function encryptionHandler(encKeyPair) {
 	let publicKey = forge.pki.publicKeyFromPem(encKeyPair.publicKey);
 	if (fs.existsSync(source.path)) {
 		let file = readFileSync(source.path);
-		let encrypted = publicKey.encrypt(file);
+		let encrypted = publicKey.encrypt(file.toString("binary"));
 		let filename = path.basename(source.path);
-		writeFileSync(destination.path, encrypted);
+		writeFileSync(destination.path, encrypted, {
+			encoding: "binary",
+		}); // must encode in binary and read it in binary in order for it to work
 		console.log(chalk.greenBright.bgBlack(filename, "ENCRYPTED"));
 	} else {
 		console.log(chalk.red("path does not exist"));
