@@ -8,7 +8,6 @@ import {
 	createAccount,
 	selectAccount,
 } from "./accountUtils.js";
-import { signAndVerifyHandler } from "./signAndVerify.js";
 import { encryptionHandler } from "./encryptionHandler.js";
 import { initConfigs } from "./configLoader.js";
 import JSONfn from "json-fn";
