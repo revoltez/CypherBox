@@ -6,10 +6,7 @@ import inquirer from "inquirer";
 import { getSigningKeyPair, createAccount } from "./accountUtils.js";
 import { signAndVerifyHandler } from "./signAndVerify.js";
 import { encryptionHandler } from "./encryptionHandler.js";
-import isEqual from "arraybuffer-equal";
-import { configDirs, initConfigs } from "./configLoader.js";
-import fs, { mkdir, readFileSync, writeFileSync } from "fs";
-import lodash from "lodash";
+import { initConfigs } from "./configLoader.js";
 import JSONfn from "json-fn";
 import forge from "node-forge";
 import { decryptionHandler } from "./decryptionHandler.js";
@@ -65,21 +62,7 @@ async function handleChoice(answers) {
 	try {
 		switch (answers.generalChoice) {
 			case 1:
-				let result = await createAccount();
-				let acc = {
-					name: result.name,
-					signingkeyPair: lodash.cloneDeep(
-						result.value.signingkeyPair
-					),
-					encKeyPair: lodash.cloneDeep(
-						result.value.encKeyPair
-					),
-				};
-				config.setSelectedAccount(acc);
-				result.value.signingkeyPair.privateKey = "";
-				config.accounts.push(result);
-				let output = JSONfn.stringify(config.accounts);
-				writeFileSync(configDirs.accountsPath, output);
+				let result = await createAccount(config);
 				homeList();
 				break;
 			case 2:

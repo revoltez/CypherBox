@@ -1,7 +1,11 @@
 import chalk from "chalk";
+import { configDirs, initConfigs } from "./configLoader.js";
+import JSONfn from "json-fn";
 import inquirer from "inquirer";
 import forge from "node-forge";
 import ora from "ora";
+import lodash from "lodash";
+import fs, { mkdir, readFileSync, writeFileSync } from "fs";
 import { spinnerObj } from "./spinner.js";
 let ed25519 = forge.pki.ed25519;
 
@@ -9,7 +13,7 @@ function getSigningKeyPair(seed) {
 	return ed25519.generateKeyPair({ seed: seed });
 }
 
-async function createAccount() {
+async function createAccount(config) {
 	try {
 		const answer = await inquirer.prompt([
 			{
@@ -44,7 +48,7 @@ async function createAccount() {
 					Math.floor(Math.random() * 10000),
 			},
 		]);
-		return {
+		let result = {
 			name: accountName.accountName,
 			value: {
 				signingkeyPair,
@@ -52,6 +56,19 @@ async function createAccount() {
 				name: accountName.accountName,
 			},
 		};
+		let acc = {
+			name: result.name,
+			signingkeyPair: lodash.cloneDeep(
+				result.value.signingkeyPair
+			),
+			encKeyPair: lodash.cloneDeep(result.value.encKeyPair),
+		};
+
+		config.setSelectedAccount(acc);
+		result.value.signingkeyPair.privateKey = "";
+		config.accounts.push(result);
+		let output = JSONfn.stringify(config.accounts);
+		writeFileSync(configDirs.accountsPath, output);
 	} catch (error) {
 		if (error.isTtyError) {
 			console.log("tty error");
