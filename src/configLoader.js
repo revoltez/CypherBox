@@ -28,7 +28,12 @@ function initConfigs(config) {
 				config.selectedAccount =
 					config.accounts[0].value;
 			}
-			console.log(chalk.blue("Welcome Back"));
+			console.log(
+				chalk.blue(
+					"Welcome Back",
+					config.selectedAccount.name
+				)
+			);
 		} else {
 			mkdir(
 				configDirs.cypherBoxDir,
