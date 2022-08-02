@@ -35,7 +35,7 @@ async function decryptionHandler(encKeyPair) {
 		let decrypted = privateKey.decrypt(file.toString("binary"));
 		let filename = path.basename(source.path);
 		writeFileSync(destination.path, decrypted);
-		console.log(chalk.greenBright.bgBlack(filename, "DECRYPTED"));
+		console.log(chalk.white.bgGreen(filename, "DECRYPTED"));
 	} else {
 		console.log(chalk.red("path does not exist"));
 	}

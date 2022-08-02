@@ -16,7 +16,7 @@ import { decryptionHandler } from "./decryptionHandler.js";
 console.log(gradient.pastel.multiline(figlet.textSync("CypherBox")));
 console.log("");
 console.log(
-	chalk.black.bgBlue("CypherBox is a minimalistic cryptographic CLI tool")
+	chalk.black.bgBlue("CypherBox is a minimalist cryptographic CLI tool")
 );
 
 //retireive accounts from .config/cypherBox/accounts/
@@ -132,7 +132,7 @@ async function handleChoice(answers) {
 					);
 					if (authenticated) {
 						console.log(
-							chalk.black.bgGreen(
+							chalk.white.bgGreen(
 								"Account authenticated successfully"
 							)
 						);

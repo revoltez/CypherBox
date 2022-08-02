@@ -26,7 +26,7 @@ async function encryptionHandler(encKeyPair) {
 		writeFileSync(destination.path, encrypted, {
 			encoding: "binary",
 		}); // must encode in binary and read it in binary in order for it to work
-		console.log(chalk.greenBright.bgBlack(filename, "ENCRYPTED"));
+		console.log(chalk.red.bgWhite(filename, "ENCRYPTED"));
 	} else {
 		console.log(chalk.red("path does not exist"));
 	}
