@@ -6,6 +6,7 @@ import forge from "node-forge";
 import ora from "ora";
 import lodash from "lodash";
 import fs, { mkdir, readFileSync, writeFileSync } from "fs";
+import { signAndVerifyHandler } from "./signAndVerify.js";
 import { spinnerObj } from "./spinner.js";
 let ed25519 = forge.pki.ed25519;
 
@@ -14,6 +15,23 @@ function getSigningKeyPair(psw) {
 	return ed25519.generateKeyPair({ seed: seed });
 }
 
+function getRsaKeysFromSeed(psw) {
+	return new Promise((resolve, reject) => {
+		const prng = forge.random.createInstance();
+		let seedObj = new String(psw);
+		prng.seedFileSync = () => seedObj.toString("hex");
+		forge.pki.rsa.generateKeyPair(
+			{
+				bits: 4096,
+				prng,
+				workers: -1,
+			},
+			function (err, keypair) {
+				resolve(keypair);
+			}
+		);
+	});
+}
 async function createAccount(config) {
 	try {
 		const answer = await inquirer.prompt([
@@ -73,21 +91,83 @@ async function createAccount(config) {
 		}
 	}
 }
-function getRsaKeysFromSeed(psw) {
-	return new Promise((resolve, reject) => {
-		const prng = forge.random.createInstance();
-		let seedObj = new String(psw);
-		prng.seedFileSync = () => seedObj.toString("hex");
-		forge.pki.rsa.generateKeyPair(
+
+async function selectAccount(config) {
+	if (config.accounts.length === 0) {
+		console.log(chalk.red("there are no Accounts yet"));
+	} else {
+		let result = await inquirer.prompt([
 			{
-				bits: 4096,
-				prng,
-				workers: -1,
+				type: "list",
+				message: "select one the following Accounts",
+				name: "account",
+				choices: config.accounts,
 			},
-			function (err, keypair) {
-				resolve(keypair);
-			}
-		);
-	});
+		]);
+		let authenticated = await authenticate(config, result.account);
+		if (authenticated) {
+			console.log(
+				chalk.black.bgGreen(
+					"Successfull Authentification"
+				)
+			);
+		} else {
+			console.log(chalk.red("bad seed given"));
+		}
+	}
 }
-export { createAccount, getSigningKeyPair };
+
+async function checkAuthentication(config) {
+	if (config.selectedAccount.signingkeyPair.privateKey === "") {
+		console.log(
+			chalk.yellow(
+				"Authenticate to continue the operation using this account"
+			)
+		);
+		let authenticated = await authenticate(
+			config,
+			config.selectedAccount
+		);
+		if (authenticated) {
+			console.log(
+				chalk.white.bgGreen(
+					"Account authenticated successfully"
+				)
+			);
+			await signAndVerifyHandler(
+				config.selectedAccount.signingkeyPair
+			);
+		} else {
+			console.log(chalk.red("wrong password privided"));
+		}
+	} else {
+		await signAndVerifyHandler(
+			config.selectedAccount.signingkeyPair
+		);
+	}
+}
+
+async function authenticate(config, selected) {
+	let result = await inquirer.prompt([
+		{
+			type: "password",
+			message: "Password Required",
+			name: "seed",
+		},
+	]);
+	let keyTest = getSigningKeyPair(result.seed);
+	if (
+		Buffer.compare(
+			Buffer.from(selected.signingkeyPair.publicKey),
+			Buffer.from(keyTest.publicKey)
+		) === 0
+	) {
+		selected.signingkeyPair = keyTest;
+		config.setSelectedAccount(selected);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+export { checkAuthentication, selectAccount, createAccount, getSigningKeyPair };

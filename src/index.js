@@ -3,7 +3,11 @@ import figlet from "figlet";
 import chalk from "chalk";
 import gradient from "gradient-string";
 import inquirer from "inquirer";
-import { getSigningKeyPair, createAccount } from "./accountUtils.js";
+import {
+	checkAuthentication,
+	createAccount,
+	selectAccount,
+} from "./accountUtils.js";
 import { signAndVerifyHandler } from "./signAndVerify.js";
 import { encryptionHandler } from "./encryptionHandler.js";
 import { initConfigs } from "./configLoader.js";
@@ -66,77 +70,12 @@ async function handleChoice(answers) {
 				homeList();
 				break;
 			case 2:
-				if (config.accounts.length === 0) {
-					console.log(
-						chalk.red(
-							"there are no Accounts yet"
-						)
-					);
-				} else {
-					let result = await inquirer.prompt([
-						{
-							type: "list",
-							message: "select one the following Accounts",
-							name: "account",
-							choices: config.accounts,
-						},
-					]);
-					let authenticated = await authenticate(
-						result.account
-					);
-					if (authenticated) {
-						console.log(
-							chalk.black.bgGreen(
-								"Successfull Authentification"
-							)
-						);
-					} else {
-						console.log(
-							chalk.red(
-								"bad seed given"
-							)
-						);
-					}
-				}
+				await selectAccount(config);
 				homeList();
 				break;
 			case 3:
 				//check if user authenticated to use the Account
-				if (
-					config.selectedAccount.signingkeyPair
-						.privateKey === ""
-				) {
-					console.log(
-						chalk.yellow(
-							"Authenticate to continue the operation using this account"
-						)
-					);
-					let authenticated = await authenticate(
-						config.selectedAccount
-					);
-					if (authenticated) {
-						console.log(
-							chalk.white.bgGreen(
-								"Account authenticated successfully"
-							)
-						);
-						await signAndVerifyHandler(
-							config.selectedAccount
-								.signingkeyPair
-						);
-					} else {
-						console.log(
-							chalk.red(
-								"wrong password privided"
-							)
-						);
-					}
-				} else {
-					await signAndVerifyHandler(
-						config.selectedAccount
-							.signingkeyPair
-					);
-				}
+				await checkAuthentication(config);
 				homeList();
 				break;
 			case 4:
@@ -158,28 +97,5 @@ async function handleChoice(answers) {
 		} else {
 			console.log("something went wrong", error);
 		}
-	}
-}
-
-async function authenticate(selected) {
-	let result = await inquirer.prompt([
-		{
-			type: "password",
-			message: "Password Required",
-			name: "seed",
-		},
-	]);
-	let keyTest = getSigningKeyPair(result.seed);
-	if (
-		Buffer.compare(
-			Buffer.from(selected.signingkeyPair.publicKey),
-			Buffer.from(keyTest.publicKey)
-		) === 0
-	) {
-		selected.signingkeyPair = keyTest;
-		config.setSelectedAccount(selected);
-		return true;
-	} else {
-		return false;
 	}
 }
