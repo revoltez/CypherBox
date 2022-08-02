@@ -56,13 +56,7 @@ async function createAccount(config) {
 				name: accountName.accountName,
 			},
 		};
-		let acc = {
-			name: result.name,
-			signingkeyPair: lodash.cloneDeep(
-				result.value.signingkeyPair
-			),
-			encKeyPair: lodash.cloneDeep(result.value.encKeyPair),
-		};
+		let acc = lodash.cloneDeep(result.value);
 
 		config.setSelectedAccount(acc);
 		result.value.signingkeyPair.privateKey = "";

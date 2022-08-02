@@ -101,6 +101,7 @@ async function handleChoice(answers) {
 				homeList();
 				break;
 			case 3:
+				//check if user authenticated to use the Account
 				if (
 					config.selectedAccount.signingkeyPair
 						.privateKey === ""
