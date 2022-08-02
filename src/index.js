@@ -169,8 +169,7 @@ async function authenticate(selected) {
 			name: "seed",
 		},
 	]);
-	let seed = Buffer.from(result.seed, "utf8");
-	let keyTest = getSigningKeyPair(seed);
+	let keyTest = getSigningKeyPair(result.seed);
 	if (
 		Buffer.compare(
 			Buffer.from(selected.signingkeyPair.publicKey),

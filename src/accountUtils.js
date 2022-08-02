@@ -9,7 +9,8 @@ import fs, { mkdir, readFileSync, writeFileSync } from "fs";
 import { spinnerObj } from "./spinner.js";
 let ed25519 = forge.pki.ed25519;
 
-function getSigningKeyPair(seed) {
+function getSigningKeyPair(psw) {
+	let seed = Buffer.from(psw, "utf8");
 	return ed25519.generateKeyPair({ seed: seed });
 }
 
@@ -27,9 +28,8 @@ async function createAccount(config) {
 			color: "yellow",
 			spinner: "arrow3",
 		}).start();
-		let seed = Buffer.from(answer.password, "utf8");
-		let signingkeyPair = getSigningKeyPair(seed);
-		let encKeyPair = await getRsaKeysFromSeed(seed);
+		let signingkeyPair = getSigningKeyPair(answer.password);
+		let encKeyPair = await getRsaKeysFromSeed(answer.password);
 		encKeyPair.publicKey = forge.pki.publicKeyToPem(
 			encKeyPair.publicKey
 		);
@@ -73,10 +73,10 @@ async function createAccount(config) {
 		}
 	}
 }
-function getRsaKeysFromSeed(seed) {
+function getRsaKeysFromSeed(psw) {
 	return new Promise((resolve, reject) => {
 		const prng = forge.random.createInstance();
-		let seedObj = new String(seed);
+		let seedObj = new String(psw);
 		prng.seedFileSync = () => seedObj.toString("hex");
 		forge.pki.rsa.generateKeyPair(
 			{
