@@ -3,16 +3,11 @@ import figlet from "figlet";
 import chalk from "chalk";
 import gradient from "gradient-string";
 import inquirer from "inquirer";
-import {
-	checkAuthentication,
-	createAccount,
-	selectAccount,
-} from "./accountUtils.js";
+import { createAccount, selectAccount } from "./accountUtils.js";
 import { encryptionHandler } from "./encryptionHandler.js";
 import { initConfigs } from "./configLoader.js";
-import JSONfn from "json-fn";
-import forge from "node-forge";
 import { decryptionHandler } from "./decryptionHandler.js";
+import { signAndVerifyHandler } from "./signAndVerify.js";
 console.log(gradient.pastel.multiline(figlet.textSync("CypherBox")));
 console.log("");
 console.log(
@@ -74,7 +69,7 @@ async function handleChoice(answers) {
 				break;
 			case 3:
 				//check if user authenticated to use the Account
-				await checkAuthentication(config);
+				await signAndVerifyHandler(config);
 				homeList();
 				break;
 			case 4:
@@ -98,3 +93,4 @@ async function handleChoice(answers) {
 		}
 	}
 }
+export { homeList };

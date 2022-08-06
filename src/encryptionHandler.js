@@ -4,6 +4,7 @@ import chalk from "chalk";
 import path from "path";
 import forge from "node-forge";
 async function encryptionHandler(encKeyPair) {
+	console.log(encKeyPair.publicKey);
 	let source = await inquirer.prompt([
 		{
 			type: "input",

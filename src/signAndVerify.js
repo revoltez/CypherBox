@@ -6,10 +6,11 @@ import chalk from "chalk";
 import os from "os";
 import path from "path";
 import { config } from "process";
+import { checkAuthentication } from "./accountUtils.js";
 
 let ed25519 = forge.pki.ed25519;
 
-async function signAndVerifyHandler(signingkeyPair) {
+async function signAndVerifyHandler(config) {
 	let result = await inquirer.prompt([
 		{
 			type: "list",
@@ -26,14 +27,19 @@ async function signAndVerifyHandler(signingkeyPair) {
 	]);
 	switch (result.choice) {
 		case 1:
+			//check if user authenticated to use current account;
+			await checkAuthentication(config);
 			let result = await inquirer.prompt([
 				{
 					type: "input",
-					message: "provide the path of the file(s)",
+					message: "File Path",
 					name: "path",
 				},
 			]);
-			sign(result.path, signingkeyPair.privateKey);
+			sign(
+				result.path,
+				config.selectedAccount.signingkeyPair.privateKey
+			);
 			break;
 		case 2:
 			let input = await inquirer.prompt([
@@ -54,7 +60,7 @@ async function signAndVerifyHandler(signingkeyPair) {
 			verify(
 				input.path,
 				input2.sigpath,
-				signingkeyPair.publicKey
+				config.selectedAccount.signingkeyPair.publicKey
 			);
 			break;
 	}

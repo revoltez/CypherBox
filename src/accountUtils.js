@@ -8,6 +8,7 @@ import lodash from "lodash";
 import fs, { mkdir, readFileSync, writeFileSync } from "fs";
 import { signAndVerifyHandler } from "./signAndVerify.js";
 import { spinnerObj } from "./spinner.js";
+import { homeList } from "./index.js";
 let ed25519 = forge.pki.ed25519;
 
 function getSigningKeyPair(psw) {
@@ -118,13 +119,14 @@ async function selectAccount(config) {
 }
 
 async function checkAuthentication(config) {
+	let authenticated;
 	if (config.selectedAccount.signingkeyPair.privateKey === "") {
 		console.log(
 			chalk.yellow(
 				"Authenticate to continue the operation using this account"
 			)
 		);
-		let authenticated = await authenticate(
+		authenticated = await authenticate(
 			config,
 			config.selectedAccount
 		);
@@ -134,16 +136,10 @@ async function checkAuthentication(config) {
 					"Account authenticated successfully"
 				)
 			);
-			await signAndVerifyHandler(
-				config.selectedAccount.signingkeyPair
-			);
 		} else {
-			console.log(chalk.red("wrong password privided"));
+			console.log(chalk.red("wrong password provided"));
+			homeList();
 		}
-	} else {
-		await signAndVerifyHandler(
-			config.selectedAccount.signingkeyPair
-		);
 	}
 }
 
