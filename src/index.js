@@ -24,9 +24,7 @@ let config = {
 	},
 };
 
-(function () {
-	initConfigs(config);
-})();
+initConfigs(config);
 
 async function homeList() {
 	try {
